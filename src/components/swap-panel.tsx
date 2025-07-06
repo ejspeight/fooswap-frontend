@@ -106,7 +106,7 @@ export function SwapPanel({ onSwap }: SwapPanelProps) {
         </div>
 
         {/* Price Information */}
-        {amountA && amountB && (
+        {amountA && amountB && parseFloat(amountA) > 0 && parseFloat(amountB) > 0 && (
           <div className="space-y-2 p-3 bg-muted rounded-lg">
             <div className="flex justify-between text-sm">
               <span>Price</span>
@@ -127,10 +127,10 @@ export function SwapPanel({ onSwap }: SwapPanelProps) {
         <Button 
           className="w-full" 
           size="lg" 
-          disabled={!amountA || !amountB}
+          disabled={!amountA || !amountB || parseFloat(amountA) <= 0 || parseFloat(amountB) <= 0}
           onClick={handleSwap}
         >
-          {!amountA || !amountB ? "Enter an amount" : `Swap ${tokenA.symbol} for ${tokenB.symbol}`}
+          {!amountA || !amountB || parseFloat(amountA) <= 0 || parseFloat(amountB) <= 0 ? "Enter an amount" : `Swap ${tokenA.symbol} for ${tokenB.symbol}`}
         </Button>
 
         {/* Additional Info */}

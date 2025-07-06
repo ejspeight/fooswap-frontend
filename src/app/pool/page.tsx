@@ -104,7 +104,7 @@ export default function PoolPage() {
                     </div>
 
                     {/* Pool Info */}
-                    {amountA && amountB && (
+                    {amountA && amountB && parseFloat(amountA) > 0 && parseFloat(amountB) > 0 && (
                       <div className="space-y-2 p-3 bg-muted rounded-lg">
                         <div className="flex justify-between text-sm">
                           <span>Pool Share</span>
@@ -117,8 +117,8 @@ export default function PoolPage() {
                       </div>
                     )}
 
-                    <Button className="w-full" size="lg" disabled={!amountA || !amountB}>
-                      {!amountA || !amountB ? "Enter amounts" : `Add ${tokenA.symbol}-${tokenB.symbol} Liquidity`}
+                    <Button className="w-full" size="lg" disabled={!amountA || !amountB || parseFloat(amountA) <= 0 || parseFloat(amountB) <= 0}>
+                      {!amountA || !amountB || parseFloat(amountA) <= 0 || parseFloat(amountB) <= 0 ? "Enter amounts" : `Add ${tokenA.symbol}-${tokenB.symbol} Liquidity`}
                     </Button>
                   </CardContent>
                 </Card>
