@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useState } from "react";
 import { ConnectButton } from "@mysten/dapp-kit";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -16,6 +17,11 @@ const navigation = [
 
 export function Navigation() {
   const pathname = usePathname();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
 
   return (
     <nav className="glass border-b border-white/10 sticky top-0 z-50">
@@ -69,15 +75,16 @@ export function Navigation() {
             <Button
               variant="ghost"
               size="sm"
-              className="md:hidden p-2 hover:bg-white/10"
+              className="md:hidden p-4 hover:bg-white/10"
+              onClick={toggleMobileMenu}
             >
-              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
               </svg>
             </Button>
             
             {/* Wallet Connect Button */}
-            <div className="relative group">
+            <div className="hidden md:block relative group">
               <ConnectButton 
                 className="!bg-gradient-to-r !from-indigo-500 !to-purple-600 !text-white !border-0 !px-6 !py-2 !rounded-lg !font-medium !shadow-lg hover:!shadow-xl hover:!scale-105 transition-all duration-300 !backdrop-blur-sm"
               />
@@ -88,24 +95,36 @@ export function Navigation() {
       </div>
 
       {/* Mobile Navigation */}
-      <div className="md:hidden">
-        <div className="px-2 pt-2 pb-3 space-y-1">
-          {navigation.map((item) => (
-            <Link
-              key={item.name}
-              href={item.href}
-              className={cn(
-                "block px-3 py-2 rounded-md text-base font-medium transition-colors",
-                pathname === item.href
-                  ? "text-white bg-white/10"
-                  : "text-muted-foreground hover:text-white hover:bg-white/5"
-              )}
-            >
-              {item.name}
-            </Link>
-          ))}
+      {isMobileMenuOpen && (
+        <div className="md:hidden">
+          <div className="px-4 pt-4 pb-6 space-y-2">
+            {navigation.map((item) => (
+              <Link
+                key={item.name}
+                href={item.href}
+                className={cn(
+                  "block px-4 py-3 rounded-lg text-base font-medium transition-colors",
+                  pathname === item.href
+                    ? "text-white bg-white/10"
+                    : "text-muted-foreground hover:text-white hover:bg-white/5"
+                )}
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                {item.name}
+              </Link>
+            ))}
+            {/* Mobile Wallet Connect Button */}
+            <div className="pt-4 border-t border-white/10 mt-4">
+              <div className="relative group">
+                <ConnectButton 
+                  className="!bg-gradient-to-r !from-indigo-500 !to-purple-600 !text-white !border-0 !w-full !px-6 !py-3 !rounded-lg !font-medium !shadow-lg hover:!shadow-xl transition-all duration-300 !backdrop-blur-sm"
+                />
+                <div className="absolute -inset-1 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-lg opacity-0 group-hover:opacity-20 blur transition-opacity duration-300"></div>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
+      )}
     </nav>
   );
 } 
