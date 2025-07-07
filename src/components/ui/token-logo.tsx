@@ -26,27 +26,47 @@ export function TokenLogo({ symbol, size = 'md', className, showFallback = true 
   const tokenData = getTokenLogoData(symbol);
 
   useEffect(() => {
-    if (!logoUrl && !hasError) {
+    // Reset state when symbol changes
+    const cachedLogo = getCachedLogo(symbol);
+    setLogoUrl(cachedLogo);
+    setIsLoading(!cachedLogo);
+    setHasError(false);
+
+    // If no cached logo, fetch it
+    if (!cachedLogo) {
       setIsLoading(true);
+      let isMounted = true;
+
       fetchTokenLogo(symbol)
         .then((url) => {
+          if (!isMounted) return;
+          
           if (url) {
             setLogoUrl(url);
-            console.log(`✅ Loaded logo for ${symbol}:`, url);
+            console.log(`Loaded logo for ${symbol}:`, url);
           } else {
             setHasError(true);
-            console.log(`⚠️ No logo available for ${symbol}, using fallback`);
+            console.log(`No logo available for ${symbol}, using fallback`);
           }
         })
         .catch((error) => {
+          if (!isMounted) return;
+          
           setHasError(true);
-          console.warn(`❌ Failed to load logo for ${symbol}:`, error);
+          console.warn(`Failed to load logo for ${symbol}:`, error);
         })
         .finally(() => {
-          setIsLoading(false);
+          if (isMounted) {
+            setIsLoading(false);
+          }
         });
+
+      // Cleanup function to prevent memory leaks
+      return () => {
+        isMounted = false;
+      };
     }
-  }, [symbol, logoUrl, hasError]);
+  }, [symbol]);
 
   // Show real logo if available
   if (logoUrl && !isLoading) {
@@ -57,7 +77,7 @@ export function TokenLogo({ symbol, size = 'md', className, showFallback = true 
           alt={`${symbol} logo`}
           className="w-full h-full rounded-full object-cover"
           onError={() => {
-            console.warn(`❌ Image failed to load for ${symbol}:`, logoUrl);
+            console.warn(`Image failed to load for ${symbol}:`, logoUrl);
             setHasError(true);
             setLogoUrl(null);
           }}
