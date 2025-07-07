@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ClientRoot } from "@/components/client-root";
+import { Navigation } from "@/components/navigation";
+import { preloadTokenLogos } from "@/lib/token-logos";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -18,6 +20,9 @@ export const metadata: Metadata = {
   description: "Swap tokens and provide liquidity on the Sui blockchain",
 };
 
+// Preload token logos on the server side
+preloadTokenLogos();
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -28,7 +33,12 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground`}
       >
-        <ClientRoot>{children}</ClientRoot>
+        <ClientRoot>
+          <Navigation />
+          <main className="min-h-screen">
+            {children}
+          </main>
+        </ClientRoot>
       </body>
     </html>
   );
